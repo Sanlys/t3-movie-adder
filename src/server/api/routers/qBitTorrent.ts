@@ -33,7 +33,7 @@ async function addTorrent(SID: string, magnet: string, username: string): Promis
     const url = `http://${SERVER_NAME}/api/v2/torrents/add`;
     const savePath = `/downloads/movies/${username}`;
 
-    const formData = new FormData();
+    const formData = new URLSearchParams();
     formData.append('urls', magnet);
     formData.append('savepath', savePath);
 
@@ -58,7 +58,7 @@ export const qBitTorrentRouter = createTRPCRouter({
                 if (!SID) {
                     throw new Error('Authentication failed');
                 }
-                await addTorrent(SID, input.magnet, ctx.session.user.email as string);
+                await addTorrent(SID, input.magnet, ctx.session.user.name+"-"+ctx.session.user.id);
                 return;
             } catch (error) {
                 throw new Error("Boo fucking hoo bitch")
