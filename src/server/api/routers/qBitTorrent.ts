@@ -11,7 +11,7 @@ const PASSWORD = process.env.PASSWORD;
 const SERVER_NAME = process.env.SERVER_NAME || 'direct.lysakermoen.com:8082';
 
 async function auth(username, password): Promise<string | null> {
-    const url = `http://${SERVER_NAME}:8082/api/v2/auth/login`;
+    const url = `http://${SERVER_NAME}/api/v2/auth/login`;
     
     const formData = new FormData();
     formData.append('username', username);
