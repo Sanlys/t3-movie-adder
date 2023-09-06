@@ -2,48 +2,49 @@ import { z, ZodError } from "zod";
 import {
     createTRPCRouter,
     protectedProcedure,
-    publicProcedure,
-    createError
+    publicProcedure
 } from "~/server/api/trpc";
 
-const USERNAME = process.env.USERNAME;
-const PASSWORD = process.env.PASSWORD;
-const SERVER_NAME = process.env.SERVER_NAME || 'direct.lysakermoen.com:8082';
+import { env } from "~/env.mjs";
 
-async function auth(username, password): Promise<string | null> {
+const USERNAME = env.QBITTORRENT_USERNAME
+const PASSWORD = env.QBITTORRENT_PASSWORD
+const SERVER_NAME = env.QBITTORRENT_SERVER_NAME
+
+async function auth(): Promise<string | null> {
     const url = `http://${SERVER_NAME}/api/v2/auth/login`;
     
-    const formData = new FormData();
-    formData.append('username', username);
+    const formData = new URLSearchParams();
+    formData.append('username', USERNAME);
     formData.append('password', PASSWORD);
 
     const response = await fetch(url, { method: 'POST', body: formData});
 
     if (response.status !== 200) {
-	return null
+	    return null
     }
 
-    const setCookieHeader = response.headers.get('Set-Cookie');
+    const setCookieHeader = response.headers.get('Set-Cookie')
     const sidMatch = setCookieHeader?.match(/SID=([^;]+)/);
-    return sidMatch ? sidMatch[1] : null;
+    return sidMatch ? sidMatch?.[1] ?? null : null;
 }
 
-async function addTorrent(SID: string, magnet: string, username: string): Promise<void> {
+async function addTorrent(SID: string, magnet: string, username: string): Promise<boolean> {
     const url = `http://${SERVER_NAME}/api/v2/torrents/add`;
     const savePath = `/downloads/movies/${username}`;
 
     const formData = new FormData();
     formData.append('urls', magnet);
-    formData.append('savepath', savepath);
+    formData.append('savepath', savePath);
 
     const response = await fetch(url, {
     	method: 'POST',
-	headers: { 'Cookie': `SID=${SID}`},
-	body: formData
+        headers: { 'Cookie': `SID=${SID}`},
+        body: formData
     });
 
     if (response.status !== 200) {
-	return false	
+	    return false
     }
     else return true
 }
@@ -51,35 +52,25 @@ async function addTorrent(SID: string, magnet: string, username: string): Promis
 export const qBitTorrentRouter = createTRPCRouter({
     add: protectedProcedure
         .input(z.object({ magnet: z.string() }))
-        .query(async ({ input, ctx }) => {
+        .mutation(async ({ input, ctx }) => {
             try {
                 const SID = await auth();
                 if (!SID) {
                     throw new Error('Authentication failed');
                 }
-                await addTorrent(SID, input.magnet, ctx.user?.username);
+                await addTorrent(SID, input.magnet, ctx.session.user.email as string);
                 return;
             } catch (error) {
-                throw createError({
-                    code: 'ZOD_ERROR',
-                    message: error.message,
-                    status: 400,
-                    originalError: new ZodError([{
-                        message: error.message,
-                        path: [],
-                        code: z.ZodIssueCode.custom,
-                        params: { custom: error.message }
-                    }])
-                });
+                throw new Error("Boo fucking hoo bitch")
             }
         }),
     info: protectedProcedure
         .query(async ({ }) => {
-	    const url = `https://${SERVER_NAME}/api/v2/torrents/info`;
+	    const url = `http://${SERVER_NAME}/api/v2/torrents/info`;
 
 	    const SID = await auth();
 	    if (!SID) {
-		throw new Error('Authentication failed');
+		    throw new Error('Authentication failed loser');
 	    }
 
             const response = await fetch(url, {
@@ -90,11 +81,7 @@ export const qBitTorrentRouter = createTRPCRouter({
             });
 
             if (!response.ok) {
-                throw createError({
-                    code: 'FETCH_ERROR',
-                    message: `Failed to fetch info. Status: ${response.status}`,
-                    status: response.status
-                });
+                throw new Error("Actual skill issue")
             }
 
             const data = await response.json();
