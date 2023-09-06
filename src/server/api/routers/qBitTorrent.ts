@@ -1,8 +1,7 @@
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import {
     createTRPCRouter,
-    protectedProcedure,
-    publicProcedure
+    protectedProcedure
 } from "~/server/api/trpc";
 
 import { env } from "~/env.mjs";
@@ -65,7 +64,7 @@ export const qBitTorrentRouter = createTRPCRouter({
             }
         }),
     info: protectedProcedure
-        .query(async ({ }) => {
+        .query<{name: string, progress: number}[]>(async ({ }) => {
 	    const url = `http://${SERVER_NAME}/api/v2/torrents/info`;
 
 	    const SID = await auth();
@@ -84,7 +83,7 @@ export const qBitTorrentRouter = createTRPCRouter({
                 throw new Error("Actual skill issue")
             }
 
-            const data = await response.json();
+            const data: {name: string, progress: number}[] = await response.json() as {name: string, progress: number}[];
             return data;
 	})
 });

@@ -1,6 +1,5 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
 import { useState } from "react";
 
 import { api } from "~/utils/api";
@@ -27,7 +26,7 @@ export default function Home() {
             <input name="Magnet link" onChange={(e) => { setManget(e.target.value) }} />
             <button className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
               onClick={() => {
-                addTorrent.mutateAsync({magnet: magnet}).then(() => {console.log("Wow ferdig og alt")})
+                addTorrent.mutateAsync({magnet: magnet}).then(() => {console.log("Wow ferdig og alt")}).catch(() => console.log("Noe gikk feil tydeligvis"))
               }}
               disabled={addTorrent.isLoading}
             >
@@ -36,11 +35,11 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            {torrentInfo.data ?
+            {torrentInfo.data && torrentInfo.data.length > 0 ?
               (
                 <>
                   <p className="text-2xl text-white">Torrent info</p>
-                  {torrentInfo.data.map(torrent => {
+                  {torrentInfo.data.map((torrent: {name: string, progress: number}) => {
                     return (
                       <>
                         <p className="text-1x1 text-white">{torrent.name}</p>
