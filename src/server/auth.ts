@@ -56,9 +56,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GITHUB_CLIENT_SECRET
     }),
     LinkedInProvider({
-      clientId: process.env.LINKEDIN_CLIENT_ID,
-      clientSecret: process.env.LINKEDIN_CLIENT_SECRET
-    })
+      clientId: env.LINKEDIN_CLIENT_ID,
+      clientSecret: env.LINKEDIN_CLIENT_SECRET
+    }),
     /**
      * ...add more providers here.
      *
