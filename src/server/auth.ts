@@ -7,6 +7,7 @@ import {
 } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import LinkedInProvider from "next-auth/providers/linkedin"
+import GitlabProvider from "next-auth/providers/gitlab"
 
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
@@ -58,6 +59,10 @@ export const authOptions: NextAuthOptions = {
     LinkedInProvider({
       clientId: env.LINKEDIN_CLIENT_ID,
       clientSecret: env.LINKEDIN_CLIENT_SECRET
+    }),
+    GitlabProvider({
+      clientId: env.GITLAB_CLIENT_ID,
+      clientSecret: env.GITLAB_CLIENT_SECRET
     }),
     /**
      * ...add more providers here.
