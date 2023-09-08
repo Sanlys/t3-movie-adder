@@ -27,6 +27,8 @@ export const env = createEnv({
     LINKEDIN_CLIENT_SECRET: z.string(),
     GITLAB_CLIENT_ID: z.string(),
     GITLAB_CLIENT_SECRET: z.string(),
+    YANDEX_CLIENT_ID: z.string(),
+    YANDEX_CLIENT_SECRET: z.string()
     QBITTORRENT_USERNAME: z.string(),
     QBITTORRENT_PASSWORD: z.string(),
     QBITTORRENT_SERVER_NAME: z.string()
@@ -56,6 +58,8 @@ export const env = createEnv({
     LINKEDIN_CLIENT_SECRET: process.env.LINKEDIN_CLIENT_SECRET,
     GITLAB_CLIENT_ID: process.env.GITLAB_CLIENT_ID,
     GITLAB_CLIENT_SECRET: process.env.GITLAB_CLIENT_SECRET,
+    YANDEX_CLIENT_ID: process.env.YANDEX_CLIENT_ID,
+    YANDEX_CLIENT_SECRET: process.env.YANDEX_CLIENT_SECRET,
     QBITTORRENT_USERNAME: process.env.QBITTORRENT_USERNAME,
     QBITTORRENT_PASSWORD: process.env.QBITTORRENT_PASSWORD,
     QBITTORRENT_SERVER_NAME: process.env.QBITTORRENT_SERVER_NAME
