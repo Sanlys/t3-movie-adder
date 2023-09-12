@@ -30,7 +30,7 @@ async function auth(): Promise<string | null> {
 
 async function addTorrent(SID: string, magnet: string, username: string): Promise<boolean> {
     const url = `http://${SERVER_NAME}/api/v2/torrents/add`;
-    const savePath = `/downloads/movies/${username}`;
+    const savePath = `/downloads/media/movies/${username}`;
 
     const formData = new URLSearchParams();
     formData.append('urls', magnet);
